@@ -60,6 +60,11 @@
       "path": "lang/pt.json"
     },
     {
+      "lang": "pt-BR",
+      "name": "Portuguese (Brazil)",
+      "path": "lang/pt-BR.json"
+    },
+    {
       "lang": "it",
       "name": "Italian",
       "path": "lang/it.json"
