@@ -48,7 +48,53 @@ export class BladesSheet extends ActorSheet {
       html.on("change", "textarea", this._onChangeInput.bind(this));  // Use delegated listener on the form
     }
 
-    html.find(".roll-die-attribute").click(this._onRollAttributeDieClick.bind(this));
+    html.find(".roll-die-attribute").click(async (event) => {
+      const attributeName = event.currentTarget?.dataset?.rollAttribute;
+
+      const applyDiceToDialog = (dialog, dialogHtml) => {
+        const localizedRoll = game.i18n.localize?.("BITD.Roll") ?? "Roll";
+        const rollLabel = attributeName
+          ? BladesHelpers.getRollLabel(attributeName)
+          : "";
+        const expectedTitle = rollLabel
+          ? `${localizedRoll} ${game.i18n.localize(rollLabel)}`
+          : localizedRoll;
+        const actualTitle = dialog?.title ?? "";
+        if (expectedTitle && !actualTitle.includes(expectedTitle)) {
+          Hooks.once("renderDialog", applyDiceToDialog);
+          return;
+        }
+
+        const qtyField = dialogHtml.find('select[name="qty"]');
+        if (!qtyField.length) return;
+
+        let diceAmount = 0;
+        try {
+          const rollData = this.actor.getRollData?.();
+          diceAmount = Number(rollData?.dice_amount?.[attributeName] ?? 0);
+        } catch (err) {
+          console.warn("Failed to determine dice amount for roll.", err);
+          diceAmount = 0;
+        }
+
+        const options = qtyField
+          .find("option")
+          .map((i, el) => Number(el.value))
+          .get()
+          .filter((val) => !Number.isNaN(val));
+        if (!options.length) return;
+
+        const maxOption = Math.max(...options);
+        const sanitizedValue = Math.max(
+          0,
+          Math.min(Number.isNaN(diceAmount) ? 0 : diceAmount, maxOption)
+        );
+        qtyField.val(String(sanitizedValue)).trigger("change");
+      };
+
+      Hooks.once("renderDialog", applyDiceToDialog);
+      this._onRollAttributeDieClick(event);
+    });
 	
     // Update Inventory Item
     html.find('.item-body').click(ev => {
