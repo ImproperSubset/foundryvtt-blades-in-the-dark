@@ -78,15 +78,7 @@ export class BladesActor extends Actor {
     })();
 
     // get crew tier info from character sheet if available
-    let current_tier = 0;
-    try {
-      let current_crew = game.actors.get(this.system.crew[0].id);
-      current_tier = parseInt(current_crew.system.tier);
-    }
-    catch (error) {
-      console.warn("No Crew is attached to the Actor.");
-      console.error(error);
-    }
+    let current_tier = BladesHelpers.getActorTier(this);
 
     let content = `
         <h2>${game.i18n.localize('BITD.Roll')} ${game.i18n.localize(attribute_label)}</h2>

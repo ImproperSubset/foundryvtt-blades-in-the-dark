@@ -357,17 +357,10 @@ export async function simpleRollPopup() {
 		let target_actor = game.actors.get(selected_tokens[0].document.actorId);
 		if (target_actor.type == "character") {
 			current_stress = parseInt(target_actor.system.stress.value);
-			try {
-				let current_crew = game.actors.get(target_actor.system.crew[0].id);
-				current_tier = parseInt(current_crew.system.tier);
-			}
-			catch (error) {
-				console.warn("No Crew is attached to the selected Token.");
-				console.error(error);
-			}
+			current_tier = BladesHelpers.getActorTier(target_actor);
 		}
 		if (target_actor.type == "crew") {
-			current_tier = parseInt(target_actor.system.tier);
+			current_tier = BladesHelpers.getActorTier(target_actor);
 		}
 		console.log("For the selected token, Stress is "+current_stress+" and Tier is "+current_tier);
 	} 

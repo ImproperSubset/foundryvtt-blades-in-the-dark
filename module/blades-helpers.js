@@ -141,6 +141,28 @@ export class BladesHelpers {
     return attribute_labels[attribute_name];
   }
 
+  static getActorTier(actor) {
+    if (!actor) return 0;
+    try {
+      if (actor.type === "character") {
+        const crew = actor.system?.crew?.[0];
+        if (crew?.id) {
+          const crewActor = game.actors.get(crew.id);
+          if (crewActor) {
+            const tier = Number(crewActor.system?.tier ?? 0);
+            return Number.isFinite(tier) ? tier : 0;
+          }
+        }
+      }
+
+      const tier = Number(actor.system?.tier ?? 0);
+      return Number.isFinite(tier) ? tier : 0;
+    } catch (err) {
+      console.warn("Unable to determine actor tier.", err);
+      return 0;
+    }
+  }
+
   /**
    * Returns the label for roll type.
    *

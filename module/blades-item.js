@@ -61,14 +61,18 @@ export class BladesItem extends Item {
     // Adds Scale and Quality
     if (this.actor?.system) {
       switch (item_data.cohort) {
-        case "Gang":
-          scale = parseInt(this.actor.system.tier);
-          quality = parseInt(this.actor.system.tier);
+        case "Gang": {
+          const tier = BladesHelpers.getActorTier(this.actor);
+          scale = tier;
+          quality = tier;
           break;
-        case "Expert":
+        }
+        case "Expert": {
+          const tier = BladesHelpers.getActorTier(this.actor);
           scale = 0;
-          quality = parseInt(this.actor.system.tier) + 1;
+          quality = tier + 1;
           break;
+        }
       }
     }
 
